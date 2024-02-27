@@ -38,8 +38,7 @@ jobs:
             smt:
               - '**/*.smt2'
 
-      - name: Run Z3 solver on changed smt2 files and compress 
-        id: run_z3_and_upload
+      - name: Run Z3 solver on changed smt2 files and upload logs 
         run: |
           # Create the 'logs' directory
           mkdir logs
@@ -55,16 +54,10 @@ jobs:
               z3 trace=true proof=true trace-file-name=logs/${base_name}.log ./$file
           done
 
-          # Compress the 'logs' directory using bzip2
-          z3_v_clean=$(echo "${{ matrix.z3version }}" | sed 's/\./_/g')
-          tar -cjf logs_z3_v${z3_v_clean}.tar.bz2 -C logs/ .
-
-          # Set the path to the compressed file as an output
-          echo "::set-output name=logs_zip_path::logs_z3_v${z3_v_clean}.tar.bz2"
-
-      - name: Upload build artifacts
+      - name: Upload log files
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: "logs_z3_v${{ matrix.z3version }}"
-          path: ${{ steps.run_z3_and_upload.outputs.logs_zip_path }}
+          name: logs
+          path: logs/*.log
+
 
