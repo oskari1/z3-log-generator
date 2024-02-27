@@ -54,6 +54,10 @@ jobs:
               z3 trace=true proof=true trace-file-name=logs/${base_name}.log ./$file
           done
 
+      - name: List log files
+        run: |
+          ls -l logs/*.log
+
       - name: Upload log files
         uses: actions/upload-artifact@v3.1.2
         with:
